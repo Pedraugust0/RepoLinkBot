@@ -106,18 +106,24 @@ def logout():
 @app.route("/manage", methods=["GET"])
 def choose_manager():
 
-    user_id = request.args.get("user_id")
+    user_id = None
+    logged_in = False
+
+    if "user_id" in session:
+        user_id = session["user_id"]
 
     #Caso não tenha um id informado (ex: ?user_id=1)
     if not user_id:
-        error = Error("Forneça um ID!")
-        return render_template("manage/choose_manager.html", error=error)
+        flash('Você precisa fazer login.', 'danger')
+        return render_template("manage/choose_manager.html",
+                               logged_in=logged_in)
 
     try:
         user = User.get(id=user_id)
+        logged_in = True
 
         return render_template("manage/choose_manager.html",
-                                user=user, error=Error()
+                                user=user, logged_in=logged_in
         )
 
     # caso o usuário não exista

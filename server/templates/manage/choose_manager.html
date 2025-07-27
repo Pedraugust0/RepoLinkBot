@@ -7,25 +7,24 @@
 </head>
 <body>
     
-    {% if error.message %}
-
-    <h1>{{error.message}}</h1>
-    
-    {% elif not user.token_discord %}
-
-    <a href="{{ url_for('auth_discord') }}">Connect Discord Account</a>
-
-    {% elif not user.token_github %}
-
-    <a href="{{ url_for('auth_github') }}">Connect Github</a>
-
+    {% if logged_in %}
+        {% if not user.token_discord %}
+            <a href="{{ url_for('auth_discord') }}">Connect Discord Account</a>
+        {% elif not user.token_github %}
+            <a href="{{ url_for('auth_github') }}">Connect Github</a>
+        {% else %}
+            <h1>Usuário conectado</h1>
+        {% endif %}
+        <a href="#">Connect Trello</a>
     {% else %}
-
-    <h1>Usuário conectado</h1>
-
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
     {% endif %}
-    
-    <a href="#">Connect Trello</a>
 
     <script></script>
 </body>
