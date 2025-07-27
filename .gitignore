@@ -3,3 +3,4 @@ venv
 *.db
 ideia.txt
 __pycache__/
+*.pem
