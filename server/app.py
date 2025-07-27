@@ -51,7 +51,7 @@ def home():
 
     status_message = request.args.get("status_message")
 
-    if 'user_id' in session:
+    if "user_id"  in session:
         try:
             user = User.get_by_id(session['user_id'])
             return render_template("main/home.html", logged_in=True, logged_out=False, user=user)
@@ -69,33 +69,45 @@ def home():
 @app.route("/login", methods=["GET", "POST"])
 def login():
 
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]
 
         user = User.get_or_none(User.username == username)
 
         if user and user.password_hash and check_password_hash(user.password_hash, password):
-            session['user_id'] = user.id
-            flash('You are logged in!', "success")
+            session["user_id"] = user.id
+            flash("You are logged in!", "success")
             return redirect(url_for('home'))
         else:
             flash("Wrong Credentials", "danger")
             return redirect(url_for('login'))
-    
     return render_template("main/login.html")
 
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
-    pass
+    if request.method == "POST": 
+        username = request.form["username"]
+        password = request.form["password"]
+
+        if User.get_or_none(User.username == username):
+            flash("Username already exists", "danger")
+            return redirect(url_for("register"))
+
+        hashed_password = generate_password_hash(password)  
+        User.create(username=username, password_hash=hashed_password)
+        
+        flash("You are registered!", "success")
+        return redirect(url_for("login"))
+    return render_template("main/register.html")
 
 
-@app.route('/logout')
+@app.route("/logout")
 def logout():
     session.clear()
     flash("You logged out!", "info")
-    return redirect(url_for('home', logged_out=True))
+    return redirect(url_for("home", logged_out=True))
 
 
 

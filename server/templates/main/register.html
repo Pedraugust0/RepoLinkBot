@@ -2,30 +2,28 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Login - RepoLink</title>
+    <title>Register - RepoLink</title>
 </head>
 <body>
+
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
             {% for category, message in messages %}
-                <h1 class="flash-message {{ category }}">{{ message }}</h1>
+               <h1 class="flash-message {{ category }}">{{ message }}</h1>
             {% endfor %}
         {% endif %}
     {% endwith %}
+    
+    <h1>Register</h1>
 
-    <h1>Login</h1>
-
-    <form method="post" action="{{ url_for('login') }}">
-        <label for="username">User  :</label><br>
+    <form method="post" action="{{ url_for('register') }}">
+        <label for="username">User:</label><br>
         <input type="text" id="username" name="username" required><br><br>
 
         <label for="password">Password:</label><br>
         <input type="password" id="password" name="password" required><br><br>
-
-        <input type="submit" value="Login">  
+        
+        <input type="submit" value="Register">
     </form>
-    
-    <a href="{{ url_for('register') }}">Register</a>
-    
 </body>
 </html>
