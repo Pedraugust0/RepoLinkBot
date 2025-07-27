@@ -6,7 +6,7 @@
     <title>RepoLinkBot</title>
 </head>
 <body>
-    
+
     {% if logged_in %}
         {% if not user.token_discord %}
             <a href="{{ url_for('auth_discord') }}">Connect Discord Account</a>
@@ -16,14 +16,12 @@
             <h1>Usuário conectado</h1>
         {% endif %}
         <a href="#">Connect Trello</a>
-    {% else %}
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                <div class="flash {{ category }}">{{ message }}</div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
+    {% elif not logged_in %}
+        <h1>{{ error.message }}</h1>
+        <script>console.log("{{error.message}} code: {{error.code}}")</script>
+    {% elif status_message.code == 500 %}
+        <h1 style="color: red;">{{ error.message }}</h1>
+        <script>alert("{{error.log_message}} code: {{error.code}}")</script>
     {% endif %}
 
     <script></script>

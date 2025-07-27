@@ -9,14 +9,6 @@
 
     {% if logged_in %}
 
-        {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-            <div class="flash {{ category }}">{{ message }}</div>
-            {% endfor %}
-        {% endif %}
-        {% endwith %}
-
         <h1>Olá, {{ user.username }}!</h1>
         
         <a href="https://github.com" target="_blank">GitHub</a>
@@ -26,16 +18,13 @@
         <a href="{{ url_for('logout') }}">Logout</a>
 
     {% else %}
-
-        {% if logged_out %}
-            {% with messages = get_flashed_messages(with_categories=true) %}
+        {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
-                <div class="flash {{ category }}">{{ message }}</div>
+                    <h1 class="flash-message {{ category }}">{{ message }}</h1>
                 {% endfor %}
             {% endif %}
-            {% endwith %}
-        {% endif %}
+        {% endwith %}
 
         <h1>HOME - REPOLINK</h1>
         <a href="{{ url_for('login') }}">Login</a>

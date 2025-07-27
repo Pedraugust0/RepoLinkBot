@@ -20,11 +20,14 @@ class User(BaseModel):
     def __str__(self):
         return self.username
 
-class Error:
+class StatusMessage:
     
-    def __init__(self, message=None, code=None):
+    def __init__(self, message=None, log_message=None, code=None, is_error=False):
         self.message = message
+        self.log_message = log_message
         self.code = code
+        self.is_error = is_error
     
     def __str__(self):
-        return f"{self.message} {self.code}"
+
+        return f"{self.message}"
