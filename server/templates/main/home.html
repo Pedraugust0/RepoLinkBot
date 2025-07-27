@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TESTES</title>
+    <title>RepoLinkBot</title>
 </head>
 <body>
     <h1>HOME</h1>
-
+    
     <!-- LINK PARA SALVAR O TOKEN NO DB -->
-    <a href="/auth/github">Conectar Github</a>
-    <a href="/auth/discord">Conectar Discord</a>
+    <a href="{{ url_for('auth_github') }}">Conectar Github</a>
+    <a href="{{ url_for('auth_discord') }}">Conectar Discord</a>
 
 </body>
 </html>

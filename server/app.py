@@ -3,8 +3,14 @@ import peewee
 import requests
 import os
 from dotenv import load_dotenv
+from model.models import db, Error, User
 
 load_dotenv()
+
+
+db.connect()
+db.create_tables([User])
+
 
 app = Flask("__name__")
 
@@ -16,9 +22,34 @@ DISCORD_CLIENT_ID= os.getenv("DISCORD_CLIENT_ID")
 DISCORD_CLIENT_SECRET= os.getenv("DISCORD_CLIENT_SECRET")
 DISCORD_REDIRECT_URI= "http://127.0.0.1:5000/discord/callback"
 
+# ----- Endpoints ----- #
+
 @app.route("/", methods=["GET"])
 def home():
     return render_template("main/home.html")
+
+@app.route("/manage", methods=["GET"])
+def choose_manager():
+
+    user_id = request.args.get("user_id")
+
+    #Caso não tenha um id informado (ex: ?user_id=1)
+    if not user_id:
+        error = Error("Forneça um ID!")
+        return render_template("manage/choose_manager.html", error=error)
+
+    try:
+        user = User.get(id=user_id)
+
+        return render_template("manage/choose_manager.html",
+                               user=user, error=Error()
+        )
+
+    # caso o usuário não exista
+    except peewee.DoesNotExist:
+        error = Error("Id inválido!")
+        return render_template("manage/choose_manager.html", error=error)
+
 
 # Endpoint de resposta da autenticação
 @app.route("/auth/connection_response", methods=["GET"])
