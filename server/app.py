@@ -1,30 +1,29 @@
 from flask import Flask, request, render_template, url_for, redirect
+from flask import session, flash
+from werkzeug.security import check_password_hash, generate_password_hash
 import peewee
-import requests
 import os
 from dotenv import load_dotenv
-from model.models import db, StatusMessage, User
+from model.models import db, StatusMessage, User, GitHubInstallation
 
-from flask import session, flash, get_flashed_messages
-from werkzeug.security import check_password_hash, generate_password_hash
+from routes.api_routes import api_bp
+from routes.auth_routes import auth_bp
+from routes.discord_routes import discord_bp
+from routes.githup_routes import github_bp
+
 load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", os.urandom(24))
 
-
-GITHUB_CLIENT_ID = os.getenv("GITHUB_CLIENT_ID")
-GITHUB_CLIENT_SECRET = os.getenv("GITHUB_CLIENT_SECRET")
-GITHUB_REDIRECT_URI = "http://127.0.0.1:5000/github/callback"
-
-DISCORD_CLIENT_ID= os.getenv("DISCORD_CLIENT_ID")
-DISCORD_CLIENT_SECRET= os.getenv("DISCORD_CLIENT_SECRET")
-DISCORD_REDIRECT_URI= "http://127.0.0.1:5000/discord/callback"
-
+app.register_blueprint(api_bp)
+app.register_blueprint(auth_bp)
+app.register_blueprint(discord_bp)
+app.register_blueprint(github_bp)
 
 # Garantir a criação das tabelas e usuários de teste
 with db:
-    db.create_tables([User])
+    db.create_tables([User, GitHubInstallation])
 
     try:
         User.get(User.username == 'adm')
@@ -110,7 +109,6 @@ def logout():
     return redirect(url_for("home", logged_out=True))
 
 
-
 @app.route("/manage", methods=["GET"])
 def choose_manager():
 
@@ -137,119 +135,6 @@ def choose_manager():
     except peewee.DoesNotExist:
         error = StatusMessage("Something bad happened, come back again later...", log_message="User is logged in but do not exists on Database",code=500, is_error=True)
         return render_template("manage/choose_manager.html", error=error)
-
-
-# Endpoint de resposta da autenticação
-@app.route("/auth/connection_response", methods=["GET"])
-def auth_connection_response():
-    message = request.args.get("message")
-    code = request.args.get("code")
-
-    return render_template("connection/connection_response.html",
-                            message=message,
-                            code=code)
-
-
-# ----- AUTENTICAÇÃO OAuth2 ----- #
-
-# Rota para link de autorização
-@app.route("/auth/discord")
-def auth_discord():
-    
-    authorize_url = (
-        "https://discord.com/api/oauth2/authorize?"
-        f"client_id={DISCORD_CLIENT_ID}&"
-        f"redirect_uri={DISCORD_REDIRECT_URI}&"
-        "response_type=code&"
-        r"scope=identify%20guilds"
-    )
-
-    return redirect(authorize_url)
-
-
-# Rota para fazer a troca do código de autorização pelo token do github
-@app.route("/discord/callback")
-def discord_callback():
-    code = request.args.get("code")
-
-    if not code:
-        return redirect(url_for("auth_connection_response", 
-                                message="Erro: Código de autorização não recebido.", 
-                                code=400))
-    
-    token_url = "https://discord.com/api/oauth2/token"
-    headers = {"Accept": "application/json"}
-    payload = {
-        "client_id": DISCORD_CLIENT_ID,
-        "client_secret": DISCORD_CLIENT_SECRET,
-        "grant_type": "authorization_code",
-        "code": code,
-        "redirect_uri": DISCORD_REDIRECT_URI,
-    }
-
-    resposta = requests.post(url=token_url, headers=headers, data=payload)
-    tokens_data = resposta.json()
-    access_token = tokens_data.get("access_token")
-
-    if not access_token:
-        return redirect(url_for("auth_connection_response", 
-                                message="Erro: Não foi possível receber o token de acesso do Discord", 
-                                code=500))
-
-    # Sucesso
-    return redirect(url_for("auth_connection_response", message="Conta do Discord conectada com sucesso!", code=200))
-
-
-# Rota para link de autorização
-@app.route("/auth/github")
-def auth_github():
-    
-    authorize_url = (
-        "https://github.com/login/oauth/authorize?"
-        f"client_id={GITHUB_CLIENT_ID}&"
-        f"redirect_uri={GITHUB_REDIRECT_URI}&"
-        "scope=read:user,repo"
-    )
-
-    return redirect(authorize_url)
-
-
-# Rota para fazer a troca do código de autorização pelo token do github
-@app.route("/github/callback")
-def github_callback():
-    #Codigo que o github envia de autorização
-    code = request.args.get("code")
-
-    if not code:
-        return redirect(url_for("auth_connection_response", 
-                                message="Erro: Código de autorização não recebido.", 
-                                code=400))
-
-    # Construindo confirmação e troca do código pelo token
-    token_url = "https://github.com/login/oauth/access_token"
-    headers = {"Accept": "application/json"}
-    payload = {
-        "client_id": GITHUB_CLIENT_ID,
-        "client_secret": GITHUB_CLIENT_SECRET,
-        "code": code,
-        "redirect_uri": GITHUB_REDIRECT_URI,
-    }
-    
-    # Trocando código pelo token
-    response = requests.post(token_url, headers=headers, data=payload)
-    token_data = response.json()
-
-    # TOKEN DE ACESSO
-    access_token = token_data.get("access_token")
-
-    if not access_token:
-        print(f"Erro ao obter token: {token_data}")
-        return redirect(url_for("auth_connection_response", 
-                                message="Erro: Não foi possível receber o token de acesso do Github", 
-                                code=500))
-
-    # Sucesso
-    return redirect(url_for("auth_connection_response", message="Conta do Github conectada com sucesso!", code=200))
 
 
 if __name__ == "__main__":
