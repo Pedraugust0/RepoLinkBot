@@ -5,7 +5,7 @@ import os
 from dotenv import load_dotenv
 from model.models import db, Error, User
 
-from flask import session, flash
+from flask import session, flash, get_flashed_messages
 from werkzeug.security import check_password_hash, generate_password_hash
 load_dotenv()
 
@@ -47,12 +47,16 @@ def home():
     if 'user_id' in session:
         try:
             user = User.get_by_id(session['user_id'])
-            return render_template("main/home.html", logged_in=True, user=user)
+            return render_template("main/home.html", logged_in=True, logged_out=False, user=user)
         except peewee.DoesNotExist:
             session.clear()
-            return render_template("main/home.html", logged_in=False)
+            return render_template("main/home.html", logged_in=False, logged_out=False)
+    
+    elif bool(get_flashed_messages(with_categories=True)):
+        return render_template("main/home.html", logged_in=False, logged_out=True)
+
     else:
-        return render_template("main/home.html", logged_in=False)
+        return render_template("main/home.html", logged_in=False, logged_out=False)
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -70,13 +74,32 @@ def login():
         else:
             flash('Usuário ou senha inválidos.', 'danger')
             return redirect(url_for('login'))
+        
+    return render_template("main/login.html")
+
+@app.route("/cadastro", methods=["GET", "POST"])
+def cadastro():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+
+        user = User.get_or_none(User.username == username)
+
+        if user and user.password_hash and check_password_hash(user.password_hash, password):
+            session['user_id'] = user.id
+            flash('Login realizado com sucesso!', 'success')
+            return redirect(url_for('home'))
+        else:
+            flash('Usuário ou senha inválidos.', 'danger')
+            return redirect(url_for('login'))
+        
     return render_template("main/login.html")
 
 @app.route('/logout')
 def logout():
     session.clear()
     flash('Você foi desconectado.', 'info')
-    return redirect(url_for('home'))
+    return redirect(url_for('home', logged_out=True))
 
 # ----- Endpoints ----- #
 
