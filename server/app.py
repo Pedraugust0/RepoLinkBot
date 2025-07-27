@@ -5,14 +5,25 @@ import os
 from dotenv import load_dotenv
 from model.models import db, Error, User
 
+from flask import session, flash
+from werkzeug.security import check_password_hash
 load_dotenv()
 
+app = Flask(__name__)
+app.secret_key = os.getenv("SECRET_KEY", os.urandom(24))
 
-db.connect()
-db.create_tables([User])
+# Gerenciamento de conexão com o banco de dados por requisição
+@app.before_request
+def before_request():
+    db.connect()
 
+@app.after_request
+def after_request(response):
+    db.close()
+    return response
 
-app = Flask("__name__")
+with db:
+    db.create_tables([User])
 
 GITHUB_CLIENT_ID = os.getenv("GITHUB_CLIENT_ID")
 GITHUB_CLIENT_SECRET = os.getenv("GITHUB_CLIENT_SECRET")
@@ -22,11 +33,44 @@ DISCORD_CLIENT_ID= os.getenv("DISCORD_CLIENT_ID")
 DISCORD_CLIENT_SECRET= os.getenv("DISCORD_CLIENT_SECRET")
 DISCORD_REDIRECT_URI= "http://127.0.0.1:5000/discord/callback"
 
-# ----- Endpoints ----- #
-
+# ----- Login/Logou ----- #
 @app.route("/", methods=["GET"])
 def home():
-    return render_template("main/home.html")
+    if 'user_id' in session:
+        try:
+            user = User.get_by_id(session['user_id'])
+            return render_template("main/home.html", logged_in=True, user=user)
+        except peewee.DoesNotExist:
+            session.clear()
+            return render_template("main/home.html", logged_in=False)
+    else:
+        return render_template("main/home.html", logged_in=False)
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+
+        user = User.get_or_none(User.username == username)
+
+        if user and user.password_hash and check_password_hash(user.password_hash, password):
+            session['user_id'] = user.id
+            flash('Login realizado com sucesso!', 'success')
+            return redirect(url_for('home'))
+        else:
+            flash('Usuário ou senha inválidos.', 'danger')
+            return redirect(url_for('login'))
+    return render_template("main/login.html")
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    flash('Você foi desconectado.', 'info')
+    return redirect(url_for('home'))
+
+# ----- Endpoints ----- #
 
 @app.route("/manage", methods=["GET"])
 def choose_manager():
@@ -42,7 +86,7 @@ def choose_manager():
         user = User.get(id=user_id)
 
         return render_template("manage/choose_manager.html",
-                               user=user, error=Error()
+                                user=user, error=Error()
         )
 
     # caso o usuário não exista
@@ -58,8 +102,8 @@ def auth_connection_response():
     code = request.args.get("code")
 
     return render_template("connection/connection_response.html",
-                           message=message,
-                           code=code)
+                            message=message,
+                            code=code)
 
 
 # ----- AUTENTICAÇÃO OAuth2 ----- #
@@ -86,8 +130,8 @@ def discord_callback():
 
     if not code:
         return redirect(url_for("auth_connection_response", 
-                               message="Erro: Código de autorização não recebido.", 
-                               code=400))
+                                message="Erro: Código de autorização não recebido.", 
+                                code=400))
     
     token_url = "https://discord.com/api/oauth2/token"
     headers = {"Accept": "application/json"}
@@ -105,8 +149,8 @@ def discord_callback():
 
     if not access_token:
         return redirect(url_for("auth_connection_response", 
-                               message="Erro: Não foi possível receber o token de acesso do Discord", 
-                               code=500))
+                                message="Erro: Não foi possível receber o token de acesso do Discord", 
+                                code=500))
 
     # Sucesso
     return redirect(url_for("auth_connection_response", message="Conta do Discord conectada com sucesso!", code=200))
@@ -133,9 +177,9 @@ def github_callback():
     code = request.args.get("code")
 
     if not code:
-        return redirect(url_for("connection/connection_response.html", 
-                               message="Erro: Código de autorização não recebido.", 
-                               code=400))
+        return redirect(url_for("auth_connection_response", 
+                                message="Erro: Código de autorização não recebido.", 
+                                code=400))
 
     # Construindo confirmação e troca do código pelo token
     token_url = "https://github.com/login/oauth/access_token"
@@ -156,9 +200,9 @@ def github_callback():
 
     if not access_token:
         print(f"Erro ao obter token: {token_data}")
-        return redirect(url_for("connection/connection_response.html", 
-                               message="Erro: Não foi possível receber o token de acesso do Github", 
-                               code=500))
+        return redirect(url_for("auth_connection_response", 
+                                message="Erro: Não foi possível receber o token de acesso do Github", 
+                                code=500))
 
     # Sucesso
     return redirect(url_for("auth_connection_response", message="Conta do Github conectada com sucesso!", code=200))
