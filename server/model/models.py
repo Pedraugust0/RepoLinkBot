@@ -8,15 +8,17 @@ class BaseModel(peewee.Model):
 
 class User(BaseModel):
     username = peewee.CharField()
-    password = peewee.CharField()
+    password_hash = peewee.CharField()
     token_discord = peewee.CharField(null=True)
     token_github = peewee.CharField(null=True)
     token_trello = peewee.CharField(null=True)
 
 
+    def __repr__(self):
+        return f"<User: {self.username}>"
 
     def __str__(self):
-        return f"{self.username} {self.password} {self.token_discord} {self.token_github} {self.token_trello} "
+        return self.username
 
 class Error:
     

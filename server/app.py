@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 from model.models import db, Error, User
 
 from flask import session, flash
-from werkzeug.security import check_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 load_dotenv()
 
 app = Flask(__name__)
@@ -24,6 +24,14 @@ def after_request(response):
 
 with db:
     db.create_tables([User])
+    # Cria o usuário 'adm' com senha '123' se ele não existir
+    try:
+        User.get(User.username == 'adm')
+    except peewee.DoesNotExist:
+        hashed_password = generate_password_hash('123')
+        User.create(username='adm', password_hash=hashed_password)
+        print("Usuário 'adm' criado com a senha padrão '123'.")
+
 
 GITHUB_CLIENT_ID = os.getenv("GITHUB_CLIENT_ID")
 GITHUB_CLIENT_SECRET = os.getenv("GITHUB_CLIENT_SECRET")
