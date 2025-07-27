@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RepoLinkBot</title>
+</head>
+<body>
+
+    {% if logged_in %}
+        {% if not user.token_discord %}
+            <a href="{{ url_for('auth_discord') }}">Connect Discord Account</a>
+        {% elif not user.token_github %}
+            <a href="{{ url_for('auth_github') }}">Connect Github</a>
+        {% else %}
+            <h1>Usuário conectado</h1>
+        {% endif %}
+        <a href="#">Connect Trello</a>
+    {% elif not logged_in %}
+        <h1>{{ error.message }}</h1>
+        <script>console.log("{{error.message}} code: {{error.code}}")</script>
+    {% elif status_message.code == 500 %}
+        <h1 style="color: red;">{{ error.message }}</h1>
+        <script>alert("{{error.log_message}} code: {{error.code}}")</script>
+    {% endif %}
+
+    <script></script>
+</body>
+</html>

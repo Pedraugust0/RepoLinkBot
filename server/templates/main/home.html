@@ -3,14 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TESTES</title>
+    <title>Gerenciador - RepoLink</title>
 </head>
 <body>
-    <h1>HOME</h1>
 
-    <!-- LINK PARA SALVAR O TOKEN NO DB -->
-    <a href="/auth/github">Conectar Github</a>
-    <a href="/auth/discord">Conectar Discord</a>
+    {% if logged_in %}
+
+        <h1>Olá, {{ user.username }}!</h1>
+        
+        <a href="https://github.com" target="_blank">GitHub</a>
+        <br>
+        <a href="https://trello.com" target="_blank">Trello</a>
+        <br><br>
+        <a href="{{ url_for('logout') }}">Logout</a>
+
+    {% else %}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <h1 class="flash-message {{ category }}">{{ message }}</h1>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <h1>HOME - REPOLINK</h1>
+        <a href="{{ url_for('login') }}">Login</a>
+        <a href="{{ url_for('register') }}">Register</a>
+
+    {% endif %}
 
 </body>
 </html>
