@@ -1,36 +1,90 @@
 <!DOCTYPE html>
-<html lang="pt-br">
-<head>
+<html lang="en"> <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerenciador - RepoLink</title>
+    <title>Manager - RepoLink</title> 
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main/home.css') }}">
 </head>
 <body>
 
     {% if logged_in %}
 
-        <h1>Olá, {{ user.username }}!</h1>
-        
-        <a href="https://github.com" target="_blank">GitHub</a>
-        <br>
-        <a href="https://trello.com" target="_blank">Trello</a>
-        <br><br>
-        <a href="{{ url_for('logout') }}">Logout</a>
+        <nav>
+            <a href="{{ url_for('github_bp.github_install')}}" target="_blank">GitHub</a>
+            <a href="#">Invite Bot</a>
+            <a href="{{ url_for('logout') }}">Logout</a>
+        </nav>
+
+        <main class="content-wrapper">
+            <h1>Hello, {{ user.username }}!</h1>
+        </main>
 
     {% else %}
+
+    <nav>
+        <a href="{{ url_for('login') }}">Login</a>
+        <a href="{{ url_for('register') }}">Register</a>
+    </nav>
+
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
-                    <h1 class="flash-message {{ category }}">{{ message }}</h1>
+                    <div class="flash-message-container">
+                        <p class="flash-message {{ category }}">{{ message }}</p>
+                    </div>
                 {% endfor %}
             {% endif %}
         {% endwith %}
 
-        <h1>HOME - REPOLINK</h1>
-        <a href="{{ url_for('login') }}">Login</a>
-        <a href="{{ url_for('register') }}">Register</a>
+        <main class="content-wrapper">
+            <h1>HOME - REPOLINK</h1>
+
+            <section class="hero-section">
+                <div class="container">
+                    <h2>Welcome to RepoLink: Your Discord Productivity Hub!</h2>
+                    <p>Tired of losing track of your project updates amidst countless tools? <strong>RepoLink</strong> is the Discord bot you need to keep your development team synchronized and informed, all without leaving your server!</p>
+                </div>
+            </section>
+
+            <section class="feature-section">
+                <div class="container">
+                    <h3>What is RepoLink?</h3>
+                    <p>RepoLink was created to be the central hub for notifications and management across the main platforms your team uses. Our mission is to simplify communication and ensure no one misses an important detail in the workflow. Imagine getting all project updates directly in your Discord channel, organized and clear!</p>
+                </div>
+            </section>
+
+            <section class="feature-section current-features">
+                <div class="container">
+                    <h3>Current Features</h3>
+                    <p>Currently, RepoLink is focused on bringing the power of <strong>GitHub</strong> directly to your Discord:</p>
+                    <ul>
+                        <li><strong>Smart GitHub Notifications:</strong> Connect RepoLink to your repository and receive real-time updates in your chosen Discord channel. Whether it's a new <strong>Pull Request</strong>, an opened <strong>Issue</strong>, a <strong>Commit</strong>, or a <strong>Push</strong> of code, RepoLink instantly notifies your team.</li>
+                        <li><strong>Detailed Visibility:</strong> Each notification is formatted with colors indicating the action type, including a direct link to the repository, who performed the action, and the relevant message. Everything you need for full context at your fingertips.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="feature-section upcoming-features">
+                <div class="container">
+                    <h3>Upcoming: Trello Integration!</h3>
+                    <p>We're working hard to expand RepoLink's functionalities! Soon, you'll be able to count on full integration with <strong>Trello</strong>. Our goal is to allow you to:</p>
+                    <ul>
+                        <li>Connect your Trello boards to your Discord server.</li>
+                        <li>Quickly view your project statuses: know how many boards are blank, in progress, or completed.</li>
+                        <li>Maintain an automated "activity board" in Discord, which will update as tasks are created and completed in Trello.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="feature-section control-center">
+                <div class="container">
+                    <h3>Your Control Center</h3>
+                    <p>Beyond notifications, RepoLink features a <strong>dedicated website for configurations</strong>. While still in development, it will be your central dashboard to manage integrations and customize how information reaches your Discord server, ensuring a secure and easy-to-use experience.</p>
+                    <p class="call-to-action">Want to simplify your team's project management? Add RepoLink to your server today and start experiencing the difference!</p>
+                </div>
+            </section>
+        </main>
 
     {% endif %}
-
 </body>
 </html>

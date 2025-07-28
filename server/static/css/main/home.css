@@ -1,0 +1,238 @@
+/* Importa uma fonte moderna do Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+:root {
+    /* Definição de variáveis de cores */
+    --primary-color: #007bff; /* Azul vibrante */
+    --secondary-color: #6c757d; /* Cinza médio */
+    --background-color: #f8f9fa; /* Branco levemente acinzentado */
+    --text-color: #343a40; /* Cinza escuro para texto */
+    --heading-color: #212529; /* Quase preto para títulos */
+    --link-hover-color: #0056b3; /* Azul mais escuro no hover */
+    --border-radius: 8px;
+    --box-shadow: rgba(0, 0, 0, 0.1);
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* --- Navegação --- */
+nav {
+    width: 100%;
+    background-color: var(--primary-color);
+    padding: 1rem 0;
+    box-shadow: 0 2px 4px var(--box-shadow);
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+}
+
+nav a {
+    color: #ffffff;
+    text-decoration: none;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+    border-radius: var(--border-radius);
+    margin: 0 0.5rem;
+}
+
+nav a:hover {
+    background-color: var(--link-hover-color);
+}
+
+/* --- Wrapper para o conteúdo principal abaixo da nav --- */
+.content-wrapper {
+    flex-grow: 1; /* Permite que o wrapper ocupe o espaço restante */
+    padding-top: 6rem; /* Garante que o conteúdo comece abaixo da nav fixa */
+    width: 100%;
+    box-sizing: border-box; /* Inclui padding no width */
+}
+
+/* --- Títulos (H1 principal da página) --- */
+h1 {
+    color: var(--heading-color);
+    margin-top: 1rem; /* Ajustado para 1rem, pois o padding-top já está no content-wrapper */
+    font-size: 2.5rem;
+    text-align: center;
+    padding: 0 1rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* --- Seções de Conteúdo --- */
+.container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+.hero-section {
+    background-color: var(--primary-color);
+    color: #ffffff;
+    text-align: center;
+    padding: 4rem 1rem;
+    margin-bottom: 2rem;
+}
+
+.hero-section h2 {
+    font-size: 2.8rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.hero-section p {
+    font-size: 1.2rem;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.feature-section {
+    padding: 2rem 0;
+    margin-bottom: 2rem;
+    background-color: #ffffff;
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 8px var(--box-shadow);
+}
+
+.feature-section h3 {
+    color: var(--primary-color);
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.feature-section p {
+    margin-bottom: 1rem;
+    text-align: justify;
+}
+
+.feature-section ul {
+    list-style: none; /* Remove bullet points padrão */
+    padding: 0;
+    margin: 1.5rem 0;
+}
+
+.feature-section ul li {
+    background-color: #e9ecef; /* Fundo cinza claro para itens da lista */
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.5rem;
+    border-left: 4px solid var(--primary-color); /* Barra colorida à esquerda */
+    border-radius: var(--border-radius);
+}
+
+.feature-section ul li strong {
+    color: var(--heading-color);
+}
+
+.call-to-action {
+    font-size: 1.3rem;
+    font-weight: 600;
+    text-align: center;
+    margin-top: 3rem;
+    color: var(--primary-color);
+}
+
+/* --- Mensagens Flash (Notificações) --- */
+/* CONTAINER para a mensagem flash para centralizar */
+.flash-message-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    position: fixed; /* Fixa a mensagem no topo */
+    top: 6rem; /* Ajusta para ficar abaixo da nav */
+    left: 0;
+    z-index: 999; /* Garante que fique acima de outros elementos */
+    padding: 0 1rem; /* Padding lateral */
+    box-sizing: border-box;
+}
+
+.flash-message {
+    font-size: 1rem;
+    padding: 0.75rem 1.5rem;
+    margin: 0; /* Remove margem para o container gerenciar */
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    text-align: center;
+    max-width: 400px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    color: white;
+    width: 100%; /* Ocupa a largura total do max-width */
+}
+
+.flash-message.success {
+    background-color: #28a745;
+}
+
+.flash-message.error, .flash-message.danger {
+    background-color: #dc3545;
+}
+
+.flash-message.info {
+    background-color: #17a2b8;
+}
+
+/* --- Responsividade --- */
+@media (max-width: 768px) {
+    .content-wrapper {
+        padding-top: 8rem; /* Ajusta para a nav maior em telas pequenas */
+    }
+
+    nav {
+        flex-direction: column;
+        padding: 0.5rem 0;
+    }
+
+    nav a {
+        padding: 0.5rem 1rem;
+        margin: 0.25rem 0;
+    }
+
+    h1 {
+        font-size: 2rem;
+    }
+
+    .hero-section h2 {
+        font-size: 2.2rem;
+    }
+
+    .hero-section p {
+        font-size: 1rem;
+    }
+
+    .feature-section h3 {
+        font-size: 1.7rem;
+    }
+
+    .flash-message-container {
+        top: 7.5rem; /* Ajusta a posição da mensagem para telas menores */
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 1.75rem;
+        word-break: break-word;
+    }
+
+    .hero-section h2 {
+        font-size: 1.8rem;
+    }
+
+    .feature-section h3 {
+        font-size: 1.5rem;
+    }
+}

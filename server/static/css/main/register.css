@@ -1,0 +1,157 @@
+/* Importa a mesma fonte do Google Fonts para consistência */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+:root {
+    /* Definição de variáveis de cores - as mesmas do home.css para consistência */
+    --primary-color: #007bff; /* Azul vibrante */
+    --secondary-color: #6c757d; /* Cinza médio */
+    --background-color: #f8f9fa; /* Branco levemente acinzentado */
+    --text-color: #343a40; /* Cinza escuro para texto */
+    --heading-color: #212529; /* Quase preto para títulos */
+    --link-hover-color: #0056b3; /* Azul mais escuro no hover */
+    --border-radius: 8px;
+    --box-shadow: rgba(0, 0, 0, 0.1);
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Centraliza verticalmente o conteúdo */
+    align-items: center;    /* Centraliza horizontalmente o conteúdo */
+    min-height: 100vh; /* Garante que o body ocupe a altura total da viewport */
+    padding: 20px; /* Adiciona um padding geral para não colar nas bordas */
+    box-sizing: border-box; /* Inclui padding no cálculo do width/height */
+}
+
+/* --- Título da Página de Registro --- */
+h1 {
+    color: var(--heading-color);
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+/* --- Estilo do Formulário --- */
+form {
+    background-color: #ffffff;
+    padding: 2.5rem;
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 15px var(--box-shadow);
+    width: 100%;
+    max-width: 400px; /* Largura máxima para o formulário */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centraliza os elementos do formulário */
+}
+
+label {
+    display: block; /* Garante que o label ocupe sua própria linha */
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--text-color);
+    align-self: flex-start; /* Alinha o label à esquerda dentro do formulário */
+}
+
+input[type="text"],
+input[type="password"] {
+    width: 100%;
+    padding: 0.8rem;
+    margin-bottom: 1.5rem; /* Espaço maior entre os campos */
+    border: 1px solid #ced4da;
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    box-sizing: border-box; /* Garante que padding e borda não aumentem a largura */
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); /* Efeito de foco suave */
+}
+
+input[type="submit"] {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: var(--border-radius);
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    width: 100%; /* Botão ocupa a largura total do formulário */
+    margin-top: 1rem; /* Espaço acima do botão */
+}
+
+input[type="submit"]:hover {
+    background-color: var(--link-hover-color);
+    transform: translateY(-2px); /* Efeito sutil ao passar o mouse */
+}
+
+/* --- Mensagens Flash (Notificações) --- */
+/* CONTAINER para a mensagem flash para centralizar */
+.flash-message-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    position: absolute; /* Usar absolute para não afetar o layout do formulário */
+    top: 20px; /* Distância do topo */
+    left: 0;
+    z-index: 999;
+    padding: 0 1rem;
+    box-sizing: border-box;
+}
+
+.flash-message {
+    font-size: 1rem;
+    padding: 0.75rem 1.5rem;
+    margin: 0; /* Remove margem para o container gerenciar */
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    text-align: center;
+    max-width: 400px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    color: white;
+    width: 100%;
+}
+
+.flash-message.success {
+    background-color: #28a745; /* Verde para sucesso */
+}
+
+.flash-message.error, .flash-message.danger {
+    background-color: #dc3545; /* Vermelho para erro */
+}
+
+.flash-message.info {
+    background-color: #17a2b8; /* Azul para informação */
+}
+
+/* --- Responsividade Básica --- */
+@media (max-width: 500px) {
+    h1 {
+        font-size: 2rem;
+    }
+
+    form {
+        padding: 1.5rem;
+        margin: 0 10px; /* Adiciona margem lateral em telas muito pequenas */
+    }
+
+    input[type="submit"] {
+        font-size: 1rem;
+        padding: 0.7rem 1.2rem;
+    }
+
+    .flash-message {
+        font-size: 0.9rem;
+        padding: 0.6rem 1rem;
+    }
+}

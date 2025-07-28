@@ -9,7 +9,7 @@ from model.models import db, StatusMessage, User, GitHubInstallation
 from routes.api_routes import api_bp
 from routes.auth_routes import auth_bp
 from routes.discord_routes import discord_bp
-from routes.githup_routes import github_bp
+from routes.github_routes import github_bp
 
 load_dotenv()
 
