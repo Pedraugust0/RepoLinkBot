@@ -24,6 +24,10 @@ class User(BaseModel):
     # Removendo token_github daqui, pois ele será gerenciado por GitHubInstallation
     token_trello = peewee.CharField(null=True)
 
+    discord_user_id = peewee.BigIntegerField(null=True, unique=True)
+    discord_notification_channel_id = peewee.BigIntegerField(null=True)
+    token_trello = peewee.CharField(null=True)
+
     def __repr__(self):
         return f"<User: {self.username}>"
 
